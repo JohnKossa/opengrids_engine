@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+dist/
+build/
+*.egg-info/
+parity_report*.json
+comp_adj.db*
+.idea/
