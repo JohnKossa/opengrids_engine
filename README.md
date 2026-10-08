@@ -21,8 +21,7 @@ model's SHAP decomposition.
 > reproduces the original application's grids exactly (see
 > [Parity](#parity-with-comp_adj_app)).
 
-**License: not yet chosen** (pending review). Please don't redistribute until
-a `LICENSE` file is added.
+Licensed under the [Apache License 2.0](LICENSE).
 
 ---
 
@@ -302,3 +301,9 @@ pytest                      # unit tests on the synthetic dataset (model tests s
 The web UI, sessions, PDF/batch rendering, photos, static maps, and the
 "low detail" Inferior/Similar/Superior view. Those belong in an
 application built on top of this library.
+
+## License
+
+Apache License 2.0. See [LICENSE](LICENSE). You may use, modify and
+redistribute this library, including in commercial and government
+products, as long as you keep the license and any notices with it.

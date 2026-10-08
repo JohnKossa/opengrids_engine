@@ -9,10 +9,11 @@ description = "Model-coherent comparable-sales grids and adjustments for any AVM
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [{ name = "John Kossa" }]
-# License intentionally not declared yet -- pending review with Lee County
-# Property Appraiser's office. Do not publish to PyPI until this is set.
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
     "Intended Audience :: Science/Research",
     "Topic :: Scientific/Engineering",
 ]
