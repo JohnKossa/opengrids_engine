@@ -247,7 +247,7 @@ class Dataset:
     def sales_row(self, sale_key_or_key: Any) -> Optional[dict]:
         """The sale row shown in a grid for a given property key.
 
-        Matches comp_adj_app, which kept the last sale per key in table order.
+        This is the last sale per key in table order.
         """
         if self._display_rows is None:
             last = self.sales[self.key].drop_duplicates(keep="last")

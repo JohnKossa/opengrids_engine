@@ -16,11 +16,6 @@ It works with any model (GBM, random forest, neural net, ensemble, or a
 linear model) because it never calls the model itself. It reads only the
 model's SHAP decomposition.
 
-> Extracted from the comp adjustment application built at the Lee County
-> (FL) Property Appraiser's office. On that office's production data it
-> reproduces the original application's grids exactly (see
-> [Parity](#parity-with-comp_adj_app)).
-
 Licensed under the [Apache License 2.0](LICENSE).
 
 ---
@@ -215,10 +210,9 @@ unmodeled field. Residual price is then regressed on the residual fields
 result is each field's marginal value *holding the model's opinion fixed*.
 Before that step, each SHAP rate in ẑ is shrunk by the normalized mutual
 information `I(x_fwl; x_j) / H(x_fwl)` between the unmodeled field and the
-modeled one. This is on by default to match comp_adj_app. Turn it off with
-`config={"fwl": {"mi_shrinkage": False}}`. It biases the unmodeled field's
-rate when that field is correlated with a modeled one; see
-[PORTING_NOTES.md](PORTING_NOTES.md).
+modeled one. This is on by default. Turn it off with
+`config={"fwl": {"mi_shrinkage": False}}`; see
+[Known limitations](#known-limitations).
 
 **Sign clamp.** A continuous field with `impact="positive"` whose fitted
 rate came out negative (or the reverse) is set to $0 and reported in
@@ -261,17 +255,30 @@ faithfully.
 
 A plain, JSON-serializable dict. The full schema is in
 [`src/opengrids/config.py`](src/opengrids/config.py), and
-`opengrids.DEFAULT_CONFIG` shows every key. It's a superset of
-comp_adj_app's saved search-config format, so an exported app config can
-be used directly.
+`opengrids.DEFAULT_CONFIG` shows every key.
 
-## Coming from comp_adj_app
+## Known limitations
 
-```python
-from opengrids.compat.comp_adj_app import load
-dataset, config = load("comp_adj.db", prefix="sf")    # opened read-only
-engine = CompGridEngine(dataset, config)
-```
+* **MI shrinkage can bias FWL rates.** When an unmodeled field is
+  correlated with a modeled one, shrinking the modeled field's rate takes
+  part of its value out of the model's opinion, and the unmodeled field
+  absorbs it. That is omitted-variable bias. On the synthetic dataset,
+  bedrooms (true value $7,500; correlated with living area) come out
+  around $13,800 county-wide with shrinkage and around $6,400 without it
+  (`examples/add_unmodeled_field.py`). Partialling out already guards
+  against double counting, so consider
+  `config={"fwl": {"mi_shrinkage": False}}`. A stronger alternative is
+  to partial out the full vector of contributions rather than the single
+  linearized prediction (Robinson's partially linear model; double machine
+  learning, Chernozhukov et al. 2018).
+* **Linear adjustments approximate a nonlinear model.** The rates are a
+  local linear surrogate. Where `grid.surrogate_fidelity` is poor, no set
+  of per-unit adjustments can represent the model faithfully near that
+  subject.
+* **Additivity of imported SHAP tables.** Approximate explainers and
+  ensembles often miss `base_value + Σ contributions = prediction` by a
+  little. `engine.check()` reports how much. Small gaps barely move the
+  rates; large ones usually mean the values aren't in dollars.
 
 ## Tests
 
@@ -281,8 +288,7 @@ pytest                      # unit tests on the synthetic dataset (model tests s
 
 ## Not included (by design)
 
-The web UI, sessions, PDF/batch rendering, photos, static maps, and the
-"low detail" Inferior/Similar/Superior view. Those belong in an
+A web UI, report rendering, photos and maps. Those belong in an
 application built on top of this library.
 
 ## License
@@ -293,5 +299,4 @@ products, as long as you keep the license and any notices with it.
 
 ## Special Thanks
 
-* Lee County (FL) Property Appraiser's office for the original comp_adj_app
-  and the synthetic dataset.
+* Lee County (FL) Property Appraiser's office for the original comp_adj_app and for agreeing to open source the methodology.

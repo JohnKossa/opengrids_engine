@@ -45,10 +45,9 @@ print(grid.to_frame().loc[["Bedrooms", "Bedrooms adj", "total_adj", "adjusted_pr
 # --- How good is the estimate? -----------------------------------------------------
 # The synthetic market knows the answer. FWL is fitted on sales, so a bigger pool
 # steadies it. Bedrooms are also correlated with living area, which exposes a
-# known issue: the default MI-shrinkage step (inherited from comp_adj_app) takes
-# part of living area's value out of the model's opinion, and bedrooms soak it
-# up. Turning it off removes that bias. See PORTING_NOTES.md, "Open
-# methodological question".
+# known issue: the default MI-shrinkage step takes part of living area's value
+# out of the model's opinion, and bedrooms soak it up. Turning it off removes
+# that bias. See "Known limitations" in the README.
 print(f"\ntrue effect: ${TRUE_EFFECTS['bedrooms']:,.0f} per bedroom")
 pools = {"local pool (default filters)": {},
          "whole county (no filters)": {"filters": [], "peel_policy": {"enabled": False}}}

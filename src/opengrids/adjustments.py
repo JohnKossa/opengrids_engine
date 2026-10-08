@@ -84,7 +84,7 @@ class AdjustmentEngine:
     # ------------------------------------------------------------- data access
     def _subset(self, frame: pd.DataFrame, ids: Iterable[str]) -> pd.DataFrame:
         """Rows for ``ids`` ordered by key, then by original row order.
-        This is the order SQLite's key index returned them in the app."""
+        Ordering is deterministic so results are reproducible run to run."""
         k = self.ds.key
         sub = frame[frame[k].isin(set(map(str, ids)))]
         return sub.sort_values(k, kind="mergesort")

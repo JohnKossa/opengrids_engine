@@ -1,9 +1,7 @@
 """Comp discovery (peel-back), ranking and pinned-comp search expansion.
 
-This is a port of comp_adj_app's ``CompFinder``. The app compiled each
-filter to a SQL ``WHERE`` clause, while this version compiles it to a pandas
-boolean mask over the in-memory sales table. SQL NULL semantics are kept
-(see :mod:`opengrids._util`).
+Each filter compiles to a pandas boolean mask over the in-memory sales
+table, with SQL NULL semantics (see :mod:`opengrids._util`).
 """
 from __future__ import annotations
 
@@ -43,12 +41,11 @@ class CompFinder:
 
     def _absolute_mask(self, field: str, op: str, value: Any, value2: Any = None) -> Optional[pd.Series]:
         """One absolute filter as a mask, or ``None`` when its value(s) don't
-        support the operator (the filter is then skipped, as in the app)."""
+        support the operator (the filter is then skipped)."""
         s = self._sales[field]
         cs = self.ds.canon_column(field) if s.dtype == object else None
         if s.dtype == object:
-            # Text column: compare the text as typed. (comp_adj_app turned
-            # "09" into 9 first, so a leading-zero code could never match.)
+            # Text column: compare the text as typed, so leading-zero codes like "09" match.
             coerce = lambda v: v.strip() if isinstance(v, str) else v  # noqa: E731
         else:
             coerce = coerce_scalar

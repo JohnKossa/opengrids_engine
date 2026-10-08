@@ -1,9 +1,7 @@
 """Search configuration: which comps qualify, how they're ranked, what gets adjusted.
 
 A config is a plain dict (JSON-serializable), so it can live in a file, a
-database row or a web form. It uses the same schema comp_adj_app
-stored in ``dataset_registry.default_search_config``, extended with a
-``grid`` block for knobs the app hard-coded. Use :func:`normalize_config`
+database row or a web form. Use :func:`normalize_config`
 to validate a partial or hand-written config and fill in defaults.
 
 Shape::
@@ -22,7 +20,7 @@ Shape::
       "adjustment_overrides": {"garage_sqft": 75.0, "pool:1": 25000.0},
       "ranking": {"method": "smallest_adj", "weights": {}, "prefer_bracketed": False},
       "expansion": "none",                  # pinned-comp search expansion
-      "fwl": {"mi_shrinkage": True},        # see PORTING_NOTES.md before relying on FWL rates
+      "fwl": {"mi_shrinkage": True},        # see "Known limitations" in the README
       "grid": {"size": 4, "pool_size": 25, "max_adjustment_pct": None},
     }
 
@@ -73,12 +71,13 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "fwl": {
         # Shrink each SHAP rate in the FWL linearization by the normalized
         # mutual information between the unmodeled field and that feature.
-        # On by default to match comp_adj_app. It can bias the unmodeled
-        # field's rate when the two are correlated; see PORTING_NOTES.md.
+        # On by default (the original method). It can bias the unmodeled
+        # field's rate when the two are correlated; see the README's
+        # "Known limitations".
         "mi_shrinkage": True,
     },
     "grid": {
-        # Comps shown on the grid (comp_adj_app: 4).
+        # Comps shown on the grid.
         "size": 4,
         # Depth of the ranked bench that comp-quality backfill draws from.
         "pool_size": 25,
@@ -215,7 +214,7 @@ def normalize_config(cfg: Optional[dict] = None, base: Optional[dict] = None) ->
         v = _safe_float(grid.get("max_adjustment_pct"), None)
         out["grid"]["max_adjustment_pct"] = v if v and v > 0 else None
 
-    # Drop app-specific bookkeeping keys if a comp_adj_app config was pasted in.
+    # Drop bookkeeping keys that configs exported from other tools may carry.
     out.pop("_schema", None)
     out.pop("_default_version", None)
     return out

@@ -1,10 +1,9 @@
 """Small value-handling helpers shared across the engine.
 
-Most of the subtle behavior here exists because the original comp_adj_app ran
-its filters as SQLite queries. When the engine moved to in-memory DataFrames,
-these helpers reproduce the SQL semantics that mattered: NULL never matches a
-comparison, ``LIKE`` is case-insensitive, and a bound value is coerced to the
-column's type before comparing.
+Filters follow SQL semantics so they behave the way assessors' database
+queries do: NULL never matches a comparison, ``LIKE``-style text matching is
+case-insensitive, and a value is coerced to the column's type before
+comparing.
 """
 from __future__ import annotations
 

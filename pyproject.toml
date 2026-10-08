@@ -35,4 +35,3 @@ packages = ["src/opengrids"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-markers = ["parity: compares against a local comp_adj_app checkout (skipped unless COMP_ADJ_APP is set)"]

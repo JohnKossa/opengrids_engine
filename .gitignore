@@ -8,3 +8,4 @@ build/
 parity_report*.json
 comp_adj.db*
 .idea/
+local/
