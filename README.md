@@ -273,23 +273,6 @@ dataset, config = load("comp_adj.db", prefix="sf")    # opened read-only
 engine = CompGridEngine(dataset, config)
 ```
 
-## Parity with comp_adj_app
-
-`tests/parity/run_parity.py` runs the original application's
-`get_grid_data` (read-only, with photos stubbed) and this library
-side by side on the same database. On Lee County's single-family
-dataset, it compares candidate pools, peel traces, every rate, every
-comp, every $ adjustment, final prices and fidelity, under the office
-default config and 12 variations: each ranking method, bracketing, the
-comp-quality cap, peel off, tight and absolute filters, overrides, FWL
-fields, and all four pinned-comp expansion methods. Every grid matches,
-apart from the documented app bugs in [PORTING_NOTES.md](PORTING_NOTES.md).
-
-```bash
-python tests/parity/run_parity.py --app ../comp_adj_app --n 100
-COMP_ADJ_APP=../comp_adj_app pytest -m parity
-```
-
 ## Tests
 
 ```bash
@@ -307,3 +290,8 @@ application built on top of this library.
 Apache License 2.0. See [LICENSE](LICENSE). You may use, modify and
 redistribute this library, including in commercial and government
 products, as long as you keep the license and any notices with it.
+
+## Special Thanks
+
+* Lee County (FL) Property Appraiser's office for the original comp_adj_app
+  and the synthetic dataset.
